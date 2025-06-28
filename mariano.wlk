@@ -1,66 +1,91 @@
 import golosinas.*
 
 object mariano {
-	const golosinas = []
-	 
-	method comprar(_golosina) { golosinas.add(_golosina) }
+	const bolsaDeGolosinas = []
+	const golosinasDesechadas = []
 	
-	method desechar (_golosina) { golosinas.remove(_golosina) }
-	
-	method golosinas() { return golosinas }
-	method primerGolosina() { return golosinas.first() }
-	method ultimaGolosina() { return golosinas.last() }
-	
-	method pesoGolosinas() { 
-		return golosinas.sum({ golo => golo.peso() })
+	method comprar(unaGolosina) {
+		bolsaDeGolosinas.add(unaGolosina)
 	}
+	
+	method desechar(unaGolosina) {
+		if (bolsaDeGolosinas.contains(unaGolosina)) {
+			bolsaDeGolosinas.remove(unaGolosina)
+			golosinasDesechadas.add(unaGolosina)
+		}
+	}
+	
+	method vaciarBolsa() {
+		bolsaDeGolosinas.clear()
+	}
+	
+	method cantidadDeGolosinas() = bolsaDeGolosinas.size()
+	
+	method tieneLaGolosina(unaGolosina) = bolsaDeGolosinas.contains(unaGolosina)
+	
+	method tieneGolosinaDeSabor(unSabor) = bolsaDeGolosinas.any(
+		{ g => g.sabor() == unSabor }
+	)
 	
 	method probarGolosinas() {
-		golosinas.forEach( {_golosina => _golosina.mordisco() } )
+		bolsaDeGolosinas.forEach({ g => g.mordisco() })
 	}
 	
-	method golosinaMasPesada() { 
-		return golosinas.max({ golo => golo.peso() })
-	}
+	method hayGolosinaSinTACC() = bolsaDeGolosinas.any(
+		{ g => g.esLibreDeGluten() }
+	)
 	
-	method hayGolosinaSinTACC() {
-		return golosinas.any({ _golosina => _golosina.libreGluten()}) 
-	}
+	method preciosCuidados() = bolsaDeGolosinas.all({ g => g.precio() <= 10 })
 	
-	method preciosCuidados() {
-		return golosinas.all({ _golosina => _golosina.precio() < 10}) 
-	}
+	method golosinaDeSabor(unSabor) = bolsaDeGolosinas.find(
+		{ g => g.sabor() == unSabor }
+	)
 	
+	method golosinasDeSabor(unSabor) = bolsaDeGolosinas.filter(
+		{ g => g.sabor() == unSabor }
+	)
 	
+	method sabores() = bolsaDeGolosinas.map({ g => g.sabor() }).asSet()
 	
-	method golosinaDeSabor(_sabor) {
-		return golosinas.find({ golosina => golosina.sabor() == _sabor })
-	}
+	method golosinaMasCara() = bolsaDeGolosinas.max({ g => g.precio() })
 	
-	method golosinasDeSabor(_sabor) {
-		return golosinas.filter({ golosina => golosina.sabor() == _sabor })
-	}
+	method golosinaMasPesada() = bolsaDeGolosinas.max({ g => g.peso() })
 	
-	method sabores() {
-		return golosinas.map({ golosina => golosina.sabor() }).asSet()
-	}
-
-
-
-	method golosinaMasCara() {
-		return golosinas.max( { _golosina => _golosina.precio() } )
-	}
-
-	method golosinasFaltantes(golosinasDeseadas) {
-		return golosinasDeseadas.difference(golosinas)	
-	}
-
-
-	method saboresFaltantes(_saboresDeseados) {
-		return _saboresDeseados.filter({_saborDeseado => ! self.tieneGolosinaDeSabor(_saborDeseado)})	
-	}
+	method pesoGolosinas() = bolsaDeGolosinas.sum({ g => g.peso() })
 	
-	method tieneGolosinaDeSabor(_sabor) {
-		return golosinas.any({_golosina => _golosina.sabor() == _sabor})
+	method golosinasFaltantes(golosinasDeseadas) = golosinasDeseadas.filter(
+		{ g => not self.tieneLaGolosina(g) }
+	)
+	
+	method gustosFaltantes(gustosDeseados) = gustosDeseados.filter(
+		{ s => not bolsaDeGolosinas.any({ g => g.sabor() == s }) }
+	)
+	
+	// ITEMS DESAFIO !!!!!!!!!!!!!!!!!!!!!!!
+	method gastoEn(unSabor) = self.golosinasDeSabor(unSabor).sum(
+		{ g => g.precio() }
+	)
+	
+	method cantidadDeGolosinasDeSabor(unSabor) = self.golosinasDeSabor(
+		unSabor
+	).size()
+	
+	method saborMasPopular() = self.sabores().max(
+		{ unSabor => self.cantidadDeGolosinasDeSabor(unSabor) }
+	)
+	
+	method saborMasPesado() = self.sabores().max(
+		{ s => bolsaDeGolosinas.filter({ g => g.sabor() == s }).sum(
+				{ g => g.peso() }
+			) }
+	)
+	
+	method comproYDesecho(unaGolosina) = golosinasDesechadas.contains(
+		unaGolosina
+	) && (not self.tieneLaGolosina(unaGolosina))
+	
+	//PARTE 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!
+	method baniar(unaGolosina) {
+		bolsaDeGolosinas.add(new GolosinaBaniada(golosinaDentro = unaGolosina))
 	}
 }
