@@ -1,3 +1,5 @@
+import mariano.*
+
 object frutilla {
 	
 }
@@ -181,4 +183,28 @@ class CarameloCorazonDeChocolate inherits Caramelo {
 	}
 	
 	override method precio() = super() + 1
+}
+
+class ObleaCrujiente inherits Oblea {
+	var cantidadDeMordiscos = 0
+	
+	override method mordisco() {
+		super()
+		cantidadDeMordiscos += 1
+		if (cantidadDeMordiscos <= 3) {
+			peso -= 3
+		}
+	}
+	
+	method estaDebil() = cantidadDeMordiscos > 3
+}
+
+class ChocolatinVIP inherits Chocolatin {
+	override method peso() = super() * (1 + self.humedad())
+	
+	method humedad() = heladeraDeMariano.humedad()
+}
+
+class ChocolatinPremium inherits ChocolatinVIP {
+	override method humedad() = super() / 2
 }

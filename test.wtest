@@ -1,10 +1,68 @@
 import golosinas.*
 import mariano.*
 
-describe "group of tests" {
-
-  test "test 1" {
-    assert.equals(100, 50+50)
+describe "Grupo de tests de la segunda parte de las golosinas" {
+  const bbd1 = new BombonDuro()
+  const caraConChoco1 = new CarameloCorazonDeChocolate(sabor = frutilla)
+  const obleaCrujiente1 = new ObleaCrujiente()
+  const chocoVIP1 = new ChocolatinVIP(pesoInicial = 100)
+  const chocoPremium1 = new ChocolatinPremium(pesoInicial = 100)
+  
+  test "BombonDuro pierde 1g por mordisco y reporta grado de dureza correctamente" {
+    assert.equals(15, bbd1.peso())
+    bbd1.mordisco()
+    assert.equals(14, bbd1.peso())
+    assert.equals(3, bbd1.gradoDeDureza())
+    bbd1.mordisco()
+    bbd1.mordisco()
+    bbd1.mordisco()
+    assert.equals(11, bbd1.peso())
+    assert.equals(2, bbd1.gradoDeDureza())
+    bbd1.mordisco()
+    bbd1.mordisco()
+    bbd1.mordisco()
+    bbd1.mordisco()
+    assert.equals(7, bbd1.peso())
+    assert.equals(1, bbd1.gradoDeDureza())
   }
-
+  
+  test "CarameloCorazonDeChocolate cambia sabor a chocolate y suma 1 peso al precio de los caramelos normales" {
+    assert.equals(frutilla, caraConChoco1.sabor())
+    caraConChoco1.mordisco()
+    assert.equals(chocolate, caraConChoco1.sabor())
+    assert.equals(2, caraConChoco1.precio())
+  }
+  
+  test "ObleaCrujiente pierde peso como Oblea más 3g extras en los primeros 3 mordiscos y queda debil" {
+    assert.equals(250, obleaCrujiente1.peso())
+    obleaCrujiente1.mordisco() // Primer mordisco 250 / 2 - 3 = 122
+    assert.equals(122, obleaCrujiente1.peso())
+    obleaCrujiente1.mordisco() // Segundo mordisco 122 / 2 - 3 = 58
+    assert.equals(58, obleaCrujiente1.peso())
+    obleaCrujiente1.mordisco() // Tercer mordisco 58 * 0.75 - 3 = 40.5
+    assert.equals(40.5, obleaCrujiente1.peso())
+    obleaCrujiente1.mordisco()
+    // Cuarto mordisco 40.5 * 0.75 = 30.375 ya no pierde los 3g extra
+    assert.equals(30.375, obleaCrujiente1.peso())
+    assert.that(obleaCrujiente1.estaDebil())
+  }
+  
+  test "ChocolatinVIP calcula peso afectado por humedad de la heladera" {
+    heladeraDeMariano.cambiarHumedad(0.5)
+    chocoVIP1.mordisco() // peso = 98
+    assert.equals(98 * 1.5, chocoVIP1.peso()) // 147
+  }
+  
+  test "ChocolatinPremium usa la mitad de la humedad que el VIP" {
+    heladeraDeMariano.cambiarHumedad(0.4)
+    chocoPremium1.mordisco() // comido = 2
+    assert.equals(98 * (1 + 0.2), chocoPremium1.peso()) // 117.6
+  }
+  
+  test "La humedad no se pasa de 0 a 1 al modificar la heladera" {
+    heladeraDeMariano.cambiarHumedad(-0.5)
+    assert.equals(0, heladeraDeMariano.humedad())
+    heladeraDeMariano.cambiarHumedad(1.2)
+    assert.equals(1, heladeraDeMariano.humedad())
+  }
 }

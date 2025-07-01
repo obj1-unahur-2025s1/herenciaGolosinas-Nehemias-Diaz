@@ -89,3 +89,13 @@ object mariano {
 		bolsaDeGolosinas.add(new GolosinaBaniada(golosinaDentro = unaGolosina))
 	}
 }
+
+object heladeraDeMariano {
+	var humedad = 0.2
+	
+	method humedad() = humedad
+	
+	method cambiarHumedad(otraHumedad) {
+		humedad = otraHumedad.max(0).min(1)
+	}
+}
